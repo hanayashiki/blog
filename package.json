@@ -1,0 +1,42 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "ts": "yarn ts-node --transpile-only",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanayashiki/blog.git"
+  },
+  "author": "hanayashiki",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hanayashiki/blog/issues"
+  },
+  "homepage": "https://github.com/hanayashiki/blog#readme",
+  "devDependencies": {
+    "@deanc/esbuild-plugin-postcss": "^1.0.2",
+    "@types/copyfiles": "^2.4.1",
+    "@types/node": "^16.11.6",
+    "@types/polka": "^0.5.3",
+    "@types/tailwindcss": "2.2.2",
+    "autoprefixer": "^10.4.0",
+    "chalk": "^4.1.2",
+    "copyfiles": "^2.4.1",
+    "esbuild": "^0.13.11",
+    "gray-matter": "^4.0.3",
+    "polka": "^0.5.2",
+    "postcss": "^8.3.11",
+    "preact-render-to-string": "^5.1.19",
+    "sirv": "^1.0.18",
+    "tailwindcss": "^2.2.19",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "preact": "^10.5.15"
+  }
+}

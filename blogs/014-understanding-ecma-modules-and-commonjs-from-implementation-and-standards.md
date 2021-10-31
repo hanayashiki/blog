@@ -1,3 +1,10 @@
+---
+title: 从实现和标准理解 ECMAScript Module 和 CommonJS Module.md
+slug: understanding-ecma-modules-and-commonjs-from-implementation-and-standards
+date: 2021-10-21
+abstract: 从 ECMAScript 标准和 Node, Rollup, TypeScript 等前端工具的角度解决你对 ES Module 和 CommonJS 的困惑。
+---
+
 # 前言
 
 ES Module 和 CommonJS 是 JS 的老大难问题，也是许多文章老生常谈的问题。笔者也看过不少相关的文章，可是总觉得看着懂，动手的时候又会出现不少的问题。比如 Node 中类似 `ERR_REQUIRE_ESM` 这样的 error 是怎么回事？为什么使用 webpack/rollup/vite 等打包工具没有出现问题，Node 中就会出现问题？什么时候需要 `importObject.default`， 什么时候又不需要？ TypeScript 中的 `esModuleInterop` 是做什么用的？为什么打包产物中会有 `__esModule` 这样的东西？这些疑难的问题，一言以蔽之，就是 JS 社区采用 ES Module 的历史遗留问题，也是实践和标准不一致的问题。本文来一一探讨其来龙去脉。
