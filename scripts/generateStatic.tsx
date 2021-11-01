@@ -125,6 +125,7 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
         renderModule,
         compiledScriptImportUrl,
         compiledCssImportUrl,
+        'Chenyu\'s Blog',
         {
           entries: blogManager.blogs.map((b) => ({
             data: b.data,
@@ -169,6 +170,7 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
           renderModule,
           compiledScriptImportUrl,
           compiledCssImportUrl,
+          blog.data.title + ' - Chenyu\'s Blog',
           {
             entry: {
               ...blog,
@@ -253,6 +255,7 @@ export const createPageHtml = async (
   renderModule: string,
   compiledScript: string,
   compiledCss: string,
+  title: string,
   props: any,
 ) => {
   const SourceModule: PageModule = await eval(`import(${JSON.stringify(renderModule)})`);
@@ -265,7 +268,7 @@ export const createPageHtml = async (
   const html = createTemplate(
     compiledScript,
     compiledCss,
-    'Chenyu\'s Blog',
+    title,
     prerendered,
   );
 
