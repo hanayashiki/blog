@@ -61,21 +61,23 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
   }
 
   const onStart = async () => {
+    t1 = new Date().getTime();
     try {
-      t1 = new Date().getTime();
       await fs.access(outdir);
       await fs.rm(outdir, {
         recursive: true,
       });
-      copyPublicPromise = new Promise(
-        (r) => copyfiles(
-          ['public/**', outdir],
-          { up: true },
-          () => r(),
-        ),
-      );
-      loadBlogsPromise = blogManager.loadBlogs();
     } catch { }
+    await ensureDir(path.dirname(outdir));
+
+    copyPublicPromise = new Promise(
+      (r) => copyfiles(
+        ['public/**', outdir],
+        { up: true },
+        () => r(),
+      ),
+    );
+    loadBlogsPromise = blogManager.loadBlogs();
   };
 
   const onEnd = async (result: BuildResult) => {

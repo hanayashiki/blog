@@ -3,7 +3,6 @@ import polka from 'polka';
 import sirv from 'sirv';
 import { logPrefix } from './common';
 
-
 polka().use(
   sirv('./dist')
 ).listen(5001, (error: any) => {
