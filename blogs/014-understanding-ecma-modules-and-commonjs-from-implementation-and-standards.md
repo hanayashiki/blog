@@ -1,5 +1,5 @@
 ---
-title: 从实现和标准理解 ECMAScript Module 和 CommonJS Module.md
+title: 从实现和标准理解 ECMAScript Module 和 CommonJS Module
 slug: understanding-ecma-modules-and-commonjs-from-implementation-and-standards
 date: 2021-10-21
 abstract: 从 ECMAScript 标准和 Node, Rollup, TypeScript 等前端工具的角度解决你对 ES Module 和 CommonJS 的困惑。
