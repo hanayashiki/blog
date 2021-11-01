@@ -9,8 +9,193 @@ body {
 @font-face {
   font-family: "MerriweatherSans Regular";
   src: url("/MerriweatherSans-Regular.ttf");
+  font-display: swap;
 }
 
 .bg {
-  background-image: url('/switzerland.jpg');
+  background-image: url('/switzerland.webp');
+}
+
+.md {
+  word-wrap: break-word;
+}
+
+.md a {
+  text-decoration: none;
+  @apply text-primary;
+}
+
+.md a:hover {
+  @apply text-white;
+}
+
+.md ::-moz-selection {
+  background: rgba(255, 255, 0, 0.3);
+  color: #000;
+}
+
+.md ::selection {
+  background: rgba(255, 255, 0, 0.3);
+  color: #000;
+}
+
+.md a::-moz-selection {
+  background: rgba(255, 255, 0, 0.3);
+  color: #0645ad;
+}
+
+.md a::selection {
+  background: rgba(255, 255, 0, 0.3);
+  color: #0645ad;
+}
+
+.md p {
+  margin: 1em 0;
+  @apply leading-loose;
+}
+
+.md img {
+  max-width: 100%;
+}
+
+.md h1,
+.md h2,
+.md h3,
+.md h4,
+.md h5,
+.md h6 {
+  font-weight: normal;
+  line-height: 2;
+}
+
+.md h4,
+.md h5, 
+.md h6 {
+  font-weight: bold;
+}
+
+.md h1 {
+  font-size: 1.5em;
+}
+
+.md h2 {
+  font-size: 2em;
+}
+
+.md h3 {
+  font-size: 1.5em;
+}
+
+.md h4 {
+  font-size: 1.2em;
+}
+
+.md h5 {
+  font-size: 1em;
+}
+
+.md h6 {
+  font-size: 0.9em;
+}
+
+.md blockquote {
+  color: #666666;
+  margin: 0;
+  padding-left: 3em;
+  border-left: 0.5em #eee solid;
+}
+
+.md hr {
+  display: block;
+  border: 0;
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #eee;
+  margin: 1em 0;
+  padding: 0;
+}
+
+.md pre,
+.md code,
+.md kbd,
+.md samp {
+  font-family: monospace, monospace;
+  _font-family: 'courier new', monospace;
+  font-size: 0.98em;
+}
+
+.md pre {
+  white-space: pre;
+  overflow-x: scroll;
+  @apply bg-gray-700 p-4 rounded-md my-1;
+}
+
+.md b,
+.md strong {
+  font-weight: bold;
+}
+
+.md dfn {
+  font-style: italic;
+}
+
+.md ins {
+  background: #ff9;
+  color: #000;
+  text-decoration: none;
+}
+
+.md mark {
+  background: #ff0;
+  color: #000;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.md sub,
+.md sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+.md sup {
+  top: -0.5em;
+}
+
+.md sub {
+  bottom: -0.25em;
+}
+
+.md ul,
+.md ol {
+  margin: 1em 0;
+  padding: 0 0 0 1em;
+}
+
+.md li {
+  margin-bottom: 8px;
+}
+
+.md li p:last-child {
+  margin: 0;
+}
+
+.md dd {
+  margin: 0 0 0 2em;
+}
+
+.md img {
+  border: 0;
+  -ms-interpolation-mode: bicubic;
+  vertical-align: middle;
+}
+
+.md table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.md td {
+  vertical-align: top;
 }

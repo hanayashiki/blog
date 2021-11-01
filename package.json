@@ -5,6 +5,9 @@
   "main": "index.js",
   "scripts": {
     "ts": "yarn ts-node --transpile-only",
+    "dev": "yarn ts scripts/dev.ts",
+    "build": "yarn ts scripts/build.ts",
+    "serve": "yarn ts scripts/serve.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,6 +23,7 @@
   "devDependencies": {
     "@deanc/esbuild-plugin-postcss": "^1.0.2",
     "@types/copyfiles": "^2.4.1",
+    "@types/fs-extra": "^9.0.13",
     "@types/node": "^16.11.6",
     "@types/polka": "^0.5.3",
     "@types/tailwindcss": "2.2.2",
@@ -27,6 +31,7 @@
     "chalk": "^4.1.2",
     "copyfiles": "^2.4.1",
     "esbuild": "^0.13.11",
+    "fs-extra": "^10.0.0",
     "gray-matter": "^4.0.3",
     "polka": "^0.5.2",
     "postcss": "^8.3.11",
@@ -37,6 +42,8 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
+    "@types/markdown-it": "^12.2.3",
+    "markdown-it": "^12.2.0",
     "preact": "^10.5.15"
   }
 }

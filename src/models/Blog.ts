@@ -6,4 +6,5 @@ export interface Blog {
     abstract: string;
   },
   content?: string;
+  html?: string;
 }

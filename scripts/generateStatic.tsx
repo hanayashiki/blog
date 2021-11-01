@@ -5,8 +5,6 @@ import { h, Fragment, FunctionComponent } from 'preact';
 import render from 'preact-render-to-string';
 import tailwindcss from 'tailwindcss';
 import { createTemplate } from './createTemplate';
-import { inspect } from 'util';
-import chalk from 'chalk';
 import copyfiles from 'copyfiles';
 // @ts-ignore
 import pluginPostcss from '@deanc/esbuild-plugin-postcss';
@@ -14,6 +12,8 @@ import polka from 'polka';
 
 import sirv from 'sirv';
 import { BlogManager } from './BlogManager';
+import { ensureDir } from 'fs-extra';
+import { logPrefix } from './common';
 
 export interface GenerateStaticOptions {
   pageRoot: string;
@@ -42,11 +42,10 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
     path.join(pageRoot, 'blogs', 'index.tsx'),
   ];
 
-  const logPrefix = `${chalk.cyan('blog')} - `;
-
   const blogManager = new BlogManager(blogRoot);
 
-  let loadBlogsPromise = await blogManager.loadBlogs();
+  let loadBlogsPromise: Promise<void> | undefined;;
+  let copyPublicPromise: Promise<void> | undefined;
 
   let t1: number | undefined;
 
@@ -68,7 +67,14 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
       await fs.rm(outdir, {
         recursive: true,
       });
-      await blogManager.loadBlogs();
+      copyPublicPromise = new Promise(
+        (r) => copyfiles(
+          ['public/**', outdir],
+          { up: true },
+          () => r(),
+        ),
+      );
+      loadBlogsPromise = blogManager.loadBlogs();
     } catch { }
   };
 
@@ -108,7 +114,10 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
       const compiledScriptImportUrl = path.relative(path.dirname(target), compiledScript);
       const compiledCssImportUrl = path.relative(path.dirname(target), compiledCss);
 
-      await loadBlogsPromise;
+      await Promise.all([
+        loadBlogsPromise,
+        copyPublicPromise,
+      ]);
 
       const html = await createPageHtml(
         renderModule,
@@ -120,15 +129,75 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
           }))
         },
       );
+
+      await ensureDir(path.dirname(target));
       const handle = await fs.open(target, 'w');
+
       try {
         await fs.writeFile(handle, html);
-        await new Promise((r) => copyfiles(['public/**', outdir], { up: true }, r));
-        console.info(`${logPrefix}pages successfully built within ${new Date().getTime() - t1!}ms`);
       } finally {
         await handle.close();
       }
     }
+
+    for (const blogPage of blogPages) {
+      const compiledScript = Object.entries(meta.outputs)
+        .find(([, meta]) => meta.entryPoint === blogPage)
+        ?.[0];
+      if (compiledScript === undefined) {
+        throw new Error(`Failed to find the compiled script for page ${blogPage}. `);
+      }
+
+      let i = 0;
+
+      for (const blog of blogManager.blogs) {
+        const target = path.join(
+          outdir,
+          path.relative(
+            pageRoot,
+            blogPage.replace(/index\.tsx$/, `${blog.data.slug}.html`),
+          ),
+        );
+
+        const compiledScriptImportUrl = path.relative(path.dirname(target), compiledScript);
+        const compiledCssImportUrl = path.relative(path.dirname(target), compiledCss);
+        const renderModule = path.resolve(compiledScript);
+
+        const html = await createPageHtml(
+          renderModule,
+          compiledScriptImportUrl,
+          compiledCssImportUrl,
+          {
+            entry: {
+              ...blog,
+              content: '',
+              html: blogManager.renderBlogToHtml(blog),
+            },
+            prev: blogManager.blogs[i + 1] && {
+              ...blogManager.blogs[i + 1],
+              content: '',
+            },
+            next: blogManager.blogs[i - 1] && {
+              ...blogManager.blogs[i - 1],
+              content: '',
+            },
+          },
+        );
+
+        await ensureDir(path.dirname(target));
+        const handle = await fs.open(target, 'w');
+
+        try {
+          await fs.writeFile(handle, html);
+        } finally {
+          await handle.close();
+        }
+
+        i++;
+      }
+    }
+
+    console.info(`${logPrefix}pages successfully built within ${new Date().getTime() - t1!}ms`);
   };
 
   await build({
@@ -151,6 +220,7 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
       '*.png',
       '*.jpg',
       '*.ttf',
+      '*.webp',
     ],
     plugins: [
       pluginPostcss({
@@ -168,6 +238,7 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
       },
     ],
     watch: dev === true,
+    minify: true,
     ...esbuildOptions,
   });
 }

@@ -1,5 +1,6 @@
 import { h } from 'preact';
 import { Blog } from '@models/Blog';
+import Layout from '@components/Layout';
 
 function BlogEntry(props: { entry: Blog }) {
   const {
@@ -8,9 +9,13 @@ function BlogEntry(props: { entry: Blog }) {
 
   return (
     <div class="py-4">
-      <h2 class="text-lg pt-2 pb-2 text-primary">
-        {entry.data.title}
-      </h2>
+      <a href={`/blogs/${entry.data.slug}`}>
+        <h2
+          class="text-lg pt-2 pb-2 text-primary hover:cursor-pointer hover:-translate-y-0.5 transition-transform"
+        >
+          {entry.data.title}
+        </h2>
+      </a>
       <p class="text-sm pb-2 text-gray-300">
         {entry.data.date.getUTCFullYear()}
         -
@@ -20,29 +25,22 @@ function BlogEntry(props: { entry: Blog }) {
       </p>
       <p class="text-sm">
         {entry.data.abstract}
-      </p> 
+      </p>
     </div>
   );
 }
 
-export default function(props: { entries: Blog[] }) {
+export default function (props: { entries: Blog[] }) {
   const {
     entries,
   } = props;
 
   return (
-    <div class="p-4 bg-gray-900 min-h-screen">
-      <main class="max-w-3xl mx-auto text-white">
-        <div class="bg h-[512px] bg-bottom bg-cover bg-no-repeat" />
-
-        <h1 class="text-center border-b-[1px] py-3 text-2xl">
-          Chenyu's Blog
-        </h1>
-
-        {entries.map((entry, i) => (
-          <BlogEntry key={i} entry={entry} />
-        ))}
-      </main>
-    </div>
+    <Layout>
+      {entries.map((entry, i) => (
+        <BlogEntry key={i} entry={entry} />
+      ))}
+    </Layout>
   );
 }
+ 

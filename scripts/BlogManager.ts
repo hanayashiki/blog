@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import * as matter from 'gray-matter';
 import path from 'path';
+import MarkdownIt from 'markdown-it';
 
 export interface Blog {
   data: {
@@ -14,7 +15,9 @@ export interface Blog {
 
 export class BlogManager {
   blogs: Blog[] = [];
-  constructor(public blogRoot: string) {}
+  md = new MarkdownIt();
+
+  constructor(public blogRoot: string) { }
 
   async loadBlogs() {
     const dir = await fs.opendir(this.blogRoot);
@@ -30,8 +33,12 @@ export class BlogManager {
         });
       }
     }
+    blogs.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
     this.blogs = blogs;
   }
 
+  renderBlogToHtml(blog: Blog) {
+    return this.md.render(blog.content);
+  }
 
 }
