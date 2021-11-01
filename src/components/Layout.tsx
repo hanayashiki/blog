@@ -25,10 +25,10 @@ export default function Layout(props: { children: ComponentChildren }) {
         <div class="h-px bg-white mx-3" />
 
         <div class="flex flex-row justify-center py-8 gap-x-4">
-          <a href="https://t.me/chenyusblog" target="_blank" rel="noreferrer" class="text-gray-300 hover:text-primary">
+          <a href="https://t.me/chenyusblog" aria-label="Telegram" target="_blank" rel="noreferrer" class="text-gray-300 hover:text-primary">
             <Telegram fill="currentColor" />
           </a>
-          <a href="https://github.com/hanayashiki" target="_blank" rel="noreferrer" class="text-gray-300 hover:text-primary">
+          <a href="https://github.com/hanayashiki" aria-label="GitHub" target="_blank" rel="noreferrer" class="text-gray-300 hover:text-primary">
             <Github fill="currentColor" />
           </a>
         </div>
