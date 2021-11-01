@@ -13,7 +13,7 @@ export const createTemplate = (
   <title>${title}</title>
 
   <link rel="stylesheet" href="${cssUrl}">
-  <link rel="preload" href="/MerriweatherSans-Regular.ttf" as="font">
+  <link rel="preload" href="/MerriweatherSans-Regular.ttf" as="font" crossorigin>
 
   <meta name="msapplication-TileColor" content="#000000">
   <meta name="theme-color" content="#000000">

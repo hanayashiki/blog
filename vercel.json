@@ -1,5 +1,61 @@
 {
   "rewrites": [
     { "source": "/blogs/:match*", "destination": "/blogs/:match*.html" }
+  ],
+  "headers": [
+    {
+      "source": "/:path*.js",
+      "headers" : [
+        {
+          "key" : "Cache-Control",
+          "value" : "public, max-age=1145141919, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/:path*.mjs",
+      "headers" : [
+        {
+          "key" : "Cache-Control",
+          "value" : "public, max-age=1145141919, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/:path*.cjs",
+      "headers" : [
+        {
+          "key" : "Cache-Control",
+          "value" : "public, max-age=1145141919, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/:path*.css",
+      "headers" : [
+        {
+          "key" : "Cache-Control",
+          "value" : "public, max-age=1145141919, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/:path*.webp",
+      "headers" : [
+        {
+          "key" : "Cache-Control",
+          "value" : "public, max-age=1145141919, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/:path*.ttf",
+      "headers" : [
+        {
+          "key" : "Cache-Control",
+          "value" : "public, max-age=1145141919, immutable"
+        }
+      ]
+    }
   ]
 }
