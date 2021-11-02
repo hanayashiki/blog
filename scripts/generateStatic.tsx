@@ -1,7 +1,8 @@
 import { build, BuildOptions, BuildResult } from 'esbuild';
 import path from 'path';
 import fs from 'fs/promises';
-import { h, Fragment, FunctionComponent } from 'preact';
+import { h, FunctionComponent } from 'preact';
+import { minify as _minifyHtml } from 'html-minifier-terser';
 import render from 'preact-render-to-string';
 import tailwindcss from 'tailwindcss';
 import { createTemplate } from './createTemplate';
@@ -61,6 +62,25 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
       console.log(`${logPrefix}dev started on port 3001`);
     });
   }
+
+  const minifyHtml = async (html: string) => {
+    return _minifyHtml(html, {
+      collapseBooleanAttributes: true,
+      collapseWhitespace: true,
+      minifyCSS: true,
+      minifyJS: true,
+      minifyURLs: true,
+      removeAttributeQuotes: true,
+      removeComments: true,
+      removeEmptyAttributes: true,
+      html5: true,
+      keepClosingSlash: true,
+      removeRedundantAttributes: true,
+      removeScriptTypeAttributes: true,
+      removeStyleLinkTypeAttributes: true,
+      useShortDoctype: true,
+    });
+  };
 
   const onStart = async () => {
     t1 = new Date().getTime();
@@ -123,7 +143,7 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
         copyPublicPromise,
       ]);
 
-      const html = await createPageHtml(
+      let html = await createPageHtml(
         renderModule,
         compiledScriptImportUrl,
         compiledCssImportUrl,
@@ -134,6 +154,10 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
           }))
         },
       );
+
+      if (!dev) {
+        html = await minifyHtml(html);
+      }
 
       await ensureDir(path.dirname(target));
       const handle = await fs.open(target, 'w');
@@ -184,7 +208,7 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
           },
         };
 
-        const html = await createPageHtml(
+        let html = await createPageHtml(
           renderModule,
           compiledScriptImportUrl,
           compiledCssImportUrl,
@@ -198,6 +222,10 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
             },
           },
         );
+
+        if (!dev) {
+          html = await minifyHtml(html);
+        }
 
         await ensureDir(path.dirname(target));
         const handle = await fs.open(target, 'w');

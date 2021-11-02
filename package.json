@@ -45,7 +45,9 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
+    "@types/html-minifier-terser": "^6.0.0",
     "@types/markdown-it": "^12.2.3",
+    "html-minifier-terser": "^6.0.2",
     "markdown-it": "^12.2.0",
     "preact": "^10.5.15"
   }
