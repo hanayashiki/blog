@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "ts": "yarn ts-node --transpile-only",
+    "ts": "yarn ts-node --transpile-only -r tsconfig-paths/register",
     "dev": "yarn ts scripts/dev.ts",
     "build": "yarn ts scripts/build.ts",
     "serve": "yarn ts scripts/serve.ts",
@@ -22,6 +22,7 @@
   "homepage": "https://github.com/hanayashiki/blog#readme",
   "devDependencies": {
     "@deanc/esbuild-plugin-postcss": "^1.0.2",
+    "@types/compression": "^1.7.2",
     "@types/copyfiles": "^2.4.1",
     "@types/fs-extra": "^9.0.13",
     "@types/node": "^16.11.6",
@@ -29,6 +30,7 @@
     "@types/tailwindcss": "2.2.2",
     "autoprefixer": "^10.4.0",
     "chalk": "^4.1.2",
+    "compression": "^1.7.4",
     "copyfiles": "^2.4.1",
     "esbuild": "^0.13.11",
     "fs-extra": "^10.0.0",
@@ -39,6 +41,7 @@
     "sirv": "^1.0.18",
     "tailwindcss": "^2.2.19",
     "ts-node": "^10.4.0",
+    "tsconfig-paths": "^3.11.0",
     "typescript": "^4.4.4"
   },
   "dependencies": {

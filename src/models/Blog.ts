@@ -2,7 +2,7 @@ export interface Blog {
   data: {
     title: string;
     slug: string;
-    date: Date;
+    date: Date | string;
     abstract: string;
   },
   content?: string;

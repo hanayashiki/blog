@@ -7,6 +7,8 @@ function BlogEntry(props: { entry: Blog }) {
     entry,
   } = props;
 
+  const date = new Date(entry.data.date);
+
   return (
     <div class="py-4">
       <a href={`/blogs/${entry.data.slug}`}>
@@ -17,11 +19,11 @@ function BlogEntry(props: { entry: Blog }) {
         </h2>
       </a>
       <p class="text-sm pb-2 text-gray-300">
-        {entry.data.date.getUTCFullYear()}
+        {date.getUTCFullYear()}
         -
-        {entry.data.date.getUTCMonth() + 1}
+        {date.getUTCMonth() + 1}
         -
-        {entry.data.date.getUTCDate()}
+        {date.getUTCDate()}
       </p>
       <p class="text-sm">
         {entry.data.abstract}
@@ -30,7 +32,7 @@ function BlogEntry(props: { entry: Blog }) {
   );
 }
 
-export default function (props: { entries: Blog[] }) {
+export default function HomePage(props: { entries: Blog[] }) {
   const {
     entries,
   } = props;

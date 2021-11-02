@@ -3,6 +3,7 @@ export const createTemplate = (
   cssUrl: string,
   title: string,
   prerendered: string,
+  clientProps: any,
 ) => `
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -25,6 +26,7 @@ export const createTemplate = (
     ${prerendered}
   </div>
 
+  <script>window.__PROPS__ = JSON.parse(${JSON.stringify(JSON.stringify(clientProps))});</script>
   <script type="module" src=${JSON.stringify(mainJsUrl)}></script>
 </body>
 

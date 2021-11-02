@@ -1,13 +1,16 @@
 import { h } from 'preact';
 import { Blog } from '@models/Blog';
 import Layout from '@components/Layout';
+import StaticBoundary from '@components/StaticBoundary';
 
-export default function (props: { entry: Blog, prev?: Blog, next?: Blog, }) {
+export default function Blog(props: { entry: Blog, prev?: Blog, next?: Blog, }) {
   const {
     entry,
     prev,
     next,
   } = props;
+
+  const date = new Date(entry.data.date);
 
   return (
     <Layout>
@@ -16,14 +19,16 @@ export default function (props: { entry: Blog, prev?: Blog, next?: Blog, }) {
       </h2>
 
       <p class="text-sm pb-2 text-gray-300">
-        {entry.data.date.getUTCFullYear()}
+        {date.getUTCFullYear()}
         -
-        {entry.data.date.getUTCMonth() + 1}
+        {date.getUTCMonth() + 1}
         -
-        {entry.data.date.getUTCDate()}
+        {date.getUTCDate()}
       </p>
 
-      <div class="md py-4" dangerouslySetInnerHTML={{ __html: entry.html! }} />
+      <StaticBoundary>
+        <div class="md py-4" dangerouslySetInnerHTML={{ __html: entry.html! }} />
+      </StaticBoundary>
 
       <div class="flex justify-between md:justify-start gap-x-2">
         {prev ? (

@@ -1,6 +1,26 @@
 import { h, ComponentChildren } from 'preact';
+import useRaf from '@libs/useRaf';
 import { Github } from './icons/Github';
 import Telegram from './icons/Telegram';
+
+function Background() {
+  useRaf();
+
+  let scrollY = 0;
+  if (typeof window !== 'undefined') {
+    scrollY = window.scrollY;
+  }
+
+  return (
+    <div
+      class="bg sm:h-[512px] h-[256px] bg-bottom bg-cover bg-no-repeat"
+      style={{
+        willChange: 'transform',
+        transform: `translateY(${scrollY / 4}px)`,
+      }}
+    />
+  );
+}
 
 export default function Layout(props: { children: ComponentChildren }) {
   const {
@@ -10,7 +30,9 @@ export default function Layout(props: { children: ComponentChildren }) {
   return (
     <div class="bg-gray-900 min-h-screen">
       <main class="max-w-3xl mx-auto text-white">
-        <div class="bg sm:h-[512px] h-[256px] bg-bottom bg-cover bg-no-repeat" />
+        <div style={{ overflow: 'hidden' }}>
+          <Background />
+        </div>
 
         <a href="/">
           <h1 class="text-center border-b-[1px] py-3 text-2xl mx-3">

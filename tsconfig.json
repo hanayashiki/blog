@@ -77,7 +77,8 @@
     "baseUrl": ".",
     "paths": {
       "@components/*": ["src/components/*"],
-      "@models/*": ["src/models/*"]
+      "@models/*": ["src/models/*"],
+      "@libs/*": ["src/libs/*"]
     }
   }
 }

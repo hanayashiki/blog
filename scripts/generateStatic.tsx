@@ -1,4 +1,4 @@
-import { build, BuildOptions, BuildResult } from 'esbuild';
+import { build, BuildOptions, BuildResult, transform } from 'esbuild';
 import path from 'path';
 import fs from 'fs/promises';
 import { h, Fragment, FunctionComponent } from 'preact';
@@ -31,16 +31,18 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
     css,
     outdir,
     esbuildOptions = {},
-    dev,
+    dev = false,
   } = options;
 
   const homePages = [
-    path.join(pageRoot, 'index.tsx'),
+    path.join(process.cwd(), pageRoot, 'index.tsx'),
   ];
 
   const blogPages = [
-    path.join(pageRoot, 'blogs', 'index.tsx'),
+    path.join(process.cwd(), pageRoot, 'blogs', 'index.tsx'),
   ];
+
+  const clientEntry = (await fs.readFile(require.resolve('./client/entry.tsx'))).toString();
 
   const blogManager = new BlogManager(blogRoot);
 
@@ -97,7 +99,7 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
 
     for (const homePage of homePages) {
       const compiledScript = Object.entries(meta.outputs)
-        .find(([, meta]) => meta.entryPoint === homePage)
+        .find(([, meta]) => path.resolve(meta.entryPoint ?? '') === homePage)
         ?.[0];
 
       if (compiledScript === undefined) {
@@ -112,7 +114,7 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
         )
       );
 
-      const renderModule = path.resolve(compiledScript);
+      const renderModule = homePage;
       const compiledScriptImportUrl = path.relative(path.dirname(target), compiledScript);
       const compiledCssImportUrl = path.relative(path.dirname(target), compiledCss);
 
@@ -145,7 +147,7 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
 
     for (const blogPage of blogPages) {
       const compiledScript = Object.entries(meta.outputs)
-        .find(([, meta]) => meta.entryPoint === blogPage)
+        .find(([, meta]) => path.resolve(meta.entryPoint ?? '') === blogPage)
         ?.[0];
       if (compiledScript === undefined) {
         throw new Error(`Failed to find the compiled script for page ${blogPage}. `);
@@ -164,26 +166,35 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
 
         const compiledScriptImportUrl = path.relative(path.dirname(target), compiledScript);
         const compiledCssImportUrl = path.relative(path.dirname(target), compiledCss);
-        const renderModule = path.resolve(compiledScript);
+        const renderModule = blogPage;
+
+        const props = {
+          entry: {
+            ...blog,
+            content: '',
+            html: blogManager.renderBlogToHtml(blog),
+          },
+          prev: blogManager.blogs[i + 1] && {
+            ...blogManager.blogs[i + 1],
+            content: '',
+          },
+          next: blogManager.blogs[i - 1] && {
+            ...blogManager.blogs[i - 1],
+            content: '',
+          },
+        };
 
         const html = await createPageHtml(
           renderModule,
           compiledScriptImportUrl,
           compiledCssImportUrl,
           blog.data.title + ' - Chenyu\'s Blog',
+          props,
           {
+            ...props,
             entry: {
-              ...blog,
-              content: '',
-              html: blogManager.renderBlogToHtml(blog),
-            },
-            prev: blogManager.blogs[i + 1] && {
-              ...blogManager.blogs[i + 1],
-              content: '',
-            },
-            next: blogManager.blogs[i - 1] && {
-              ...blogManager.blogs[i - 1],
-              content: '',
+              ...props.entry,
+              html: '',
             },
           },
         );
@@ -238,11 +249,33 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
         setup(build) {
           build.onStart(onStart);
           build.onEnd(onEnd);
+          build.onLoad({ filter: /pages\/.*\.tsx/ }, async ({ path }) => {
+            const input = (await fs.readFile(path)).toString();
+            const exportDefaultName = /^\s+export\s+default\s+function\s+(\w+)/m.exec(input)?.[1];
+            if (exportDefaultName === undefined) {
+              throw new Error(`Didn't find a default export for page: ${path}. Did you use 'export default function PageName() {}' to define the page component?`);
+            }
+
+            let transformedInput = input
+              + '\n'
+              + clientEntry.replace(/__PAGE__/g, exportDefaultName);
+
+            const result = await transform(transformedInput, {
+              loader: 'tsx',
+              format: 'esm',
+              jsxFactory: 'h',
+              jsxFragment: 'Fragment',
+            });
+
+            return {
+              contents: result.code,
+            };
+          });
         }
       },
     ],
     watch: dev === true,
-    minify: true,
+    minify: dev === false,
     ...esbuildOptions,
   });
 }
@@ -257,19 +290,23 @@ export const createPageHtml = async (
   compiledCss: string,
   title: string,
   props: any,
+  clientProps = props,
 ) => {
-  const SourceModule: PageModule = await eval(`import(${JSON.stringify(renderModule)})`);
-  const prerendered = render((
-    <>
-      {<SourceModule.default {...props} />}
-    </>
-  ));
+  for (const key of Object.keys(require.cache)) {
+    if (key.startsWith(path.join(process.cwd(), 'src'))) {
+      delete require.cache[key]; // To allow hot reloading
+    }
+  }
+
+  const SourceModule: PageModule = require(renderModule);
+  const prerendered = render(<SourceModule.default {...props} />);
 
   const html = createTemplate(
     compiledScript,
     compiledCss,
     title,
     prerendered,
+    clientProps,
   );
 
   return html;
