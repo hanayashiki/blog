@@ -1,4 +1,4 @@
-import { build, BuildOptions, BuildResult, transform } from 'esbuild';
+import { build, BuildOptions, BuildResult } from 'esbuild';
 import path from 'path';
 import fs from 'fs/promises';
 import { h, Fragment, FunctionComponent } from 'preact';
@@ -260,15 +260,9 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
               + '\n'
               + clientEntry.replace(/__PAGE__/g, exportDefaultName);
 
-            const result = await transform(transformedInput, {
-              loader: 'tsx',
-              format: 'esm',
-              jsxFactory: 'h',
-              jsxFragment: 'Fragment',
-            });
-
             return {
-              contents: result.code,
+              contents: transformedInput,
+              loader: 'tsx',
             };
           });
         }
