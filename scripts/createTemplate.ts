@@ -19,7 +19,7 @@ export const createTemplate = (
   <meta name="msapplication-TileColor" content="#000000">
   <meta name="theme-color" content="#000000">
   <meta name="description" content="专注于 JavaScript 的技术博客。A tech-blog mainly focused on JavaScript. ">
-  <script defer data-domain="blog.chenyu.pw" src="https://plausible.io/js/plausible.js"></script>
+  <script async defer data-domain="blog.chenyu.pw" src="https://plausible.monoid.co.jp/js/plausible.js"></script>
 </head>
 
 <body>
