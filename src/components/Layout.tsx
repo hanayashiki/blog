@@ -2,6 +2,7 @@ import { h, ComponentChildren } from 'preact';
 import useRaf from '@libs/useRaf';
 import { Github } from './icons/Github';
 import Telegram from './icons/Telegram';
+import { Plausible } from './icons/Plausible';
 
 function Background() {
   useRaf();
@@ -46,13 +47,18 @@ export default function Layout(props: { children: ComponentChildren }) {
 
         <div class="h-px bg-white mx-3" />
 
-        <div class="flex flex-row justify-center py-8 gap-x-4">
-          <a href="https://t.me/chenyusblog" aria-label="Telegram" target="_blank" rel="noreferrer" class="text-gray-300 hover:text-primary">
-            <Telegram fill="currentColor" />
-          </a>
-          <a href="https://github.com/hanayashiki" aria-label="GitHub" target="_blank" rel="noreferrer" class="text-gray-300 hover:text-primary">
-            <Github fill="currentColor" />
-          </a>
+        <div class="flex flex-col py-8 mx-5 gap-y-8">
+          <div class="flex flex-row justify-center gap-x-4">
+            <a href="https://t.me/chenyusblog" aria-label="Telegram" target="_blank" rel="noreferrer" class="text-gray-300 hover:text-primary">
+              <Telegram fill="currentColor" />
+            </a>
+            <a href="https://github.com/hanayashiki" aria-label="GitHub" target="_blank" rel="noreferrer" class="text-gray-300 hover:text-primary">
+              <Github fill="currentColor" />
+            </a>
+            <a href="https://plausible.monoid.co.jp/blog.chenyu.pw" aria-label="Analytics with Plausible" target="_blank" rel="noreferrer" class="text-gray-300 hover:text-primary">
+              <Plausible fill="currentColor" />
+            </a>
+          </div>
         </div>
       </main>
     </div>

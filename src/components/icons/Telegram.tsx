@@ -10,9 +10,9 @@ export default function Telegram(props: IconProps) {
   return (
     <svg
       fill={fill ?? '#eeeeee'}
-      height={size ?? 18}
-      width={size ?? 18}
-      viewBox="0 0 24 24"
+      height={size ?? 24}
+      width={size ?? 24}
+      viewBox="0 0 28 28"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
       style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"
