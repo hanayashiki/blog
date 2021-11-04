@@ -129,6 +129,10 @@ body {
   @apply bg-gray-700 p-4 rounded-md my-1;
 }
 
+.md code {
+  word-wrap: normal;
+}
+
 .md b,
 .md strong {
   font-weight: bold;
