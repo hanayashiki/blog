@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import * as matter from 'gray-matter';
 import path from 'path';
 import MarkdownIt from 'markdown-it';
+import hljs from 'highlight.js';
 
 export interface Blog {
   data: {
@@ -15,7 +16,7 @@ export interface Blog {
 
 export class BlogManager {
   blogs: Blog[] = [];
-  md = new MarkdownIt();
+  md = this.createMarkdownIt();
 
   constructor(public blogRoot: string) { }
 
@@ -39,6 +40,17 @@ export class BlogManager {
 
   renderBlogToHtml(blog: Blog) {
     return this.md.render(blog.content);
+  }
+
+  createMarkdownIt() {
+    return new MarkdownIt({
+      highlight: (str, lang) => {
+        if (lang && hljs.getLanguage(lang)) {
+          return hljs.highlight(str, { language: lang }).value;
+        }
+        return '';
+      },
+    })
   }
 
 }

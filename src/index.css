@@ -200,3 +200,15 @@ body {
 .md td {
   vertical-align: top;
 }
+
+.hljs-keyword {
+  @apply text-primary;
+}
+
+.function_ {
+  @apply text-green-300;
+}
+
+.hljs-string {
+  @apply text-yellow-300;
+}
