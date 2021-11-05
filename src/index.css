@@ -8,12 +8,12 @@ body {
 
 @font-face {
   font-family: "MerriweatherSans Regular";
-  src: url("/MerriweatherSans-Regular.ttf");
+  src: url("./assets/MerriweatherSans-Regular.ttf");
   font-display: swap;
 }
 
 .bg {
-  background-image: url('/switzerland.webp');
+  background-image: url('./assets/switzerland.webp');
 }
 
 .md {

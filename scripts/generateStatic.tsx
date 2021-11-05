@@ -7,8 +7,7 @@ import render from 'preact-render-to-string';
 import tailwindcss from 'tailwindcss';
 import { createTemplate } from './createTemplate';
 import copyfiles from 'copyfiles';
-// @ts-ignore
-import pluginPostcss from '@deanc/esbuild-plugin-postcss';
+import { pluginPostcss } from './pluginPostcss';
 import polka from 'polka';
 
 import sirv from 'sirv';
@@ -259,19 +258,15 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
     outExtension: {
       '.js': '.mjs',
     },
-    external: [
-      '*.png',
-      '*.jpg',
-      '*.ttf',
-      '*.webp',
-    ],
+    loader: {
+      '.ttf': 'file',
+      '.webp': 'file',
+    },
     plugins: [
-      pluginPostcss({
-        plugins: [
-          // @ts-ignore
-          tailwindcss((await import('../tailwind.config.cjs')).default),
-        ],
-      }),
+      pluginPostcss([
+        // @ts-ignore
+        tailwindcss((await import('../tailwind.config.cjs')).default),
+      ]),
       {
         name: 'blog',
         setup(build) {
