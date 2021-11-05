@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "ts": "yarn ts-node --transpile-only -r tsconfig-paths/register",
-    "dev": "yarn ts scripts/dev.ts",
-    "build": "yarn ts scripts/build.ts",
+    "dev": "NODE_ENV=development yarn ts scripts/dev.ts",
+    "build": "NODE_ENV=production yarn ts scripts/build.ts",
     "serve": "yarn ts scripts/serve.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

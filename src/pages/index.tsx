@@ -13,7 +13,7 @@ function BlogEntry(props: { entry: Blog }) {
     <div class="py-4">
       <a href={`/blogs/${entry.data.slug}`}>
         <h2
-          class="text-lg pt-2 pb-2 text-primary hover:cursor-pointer hover:-translate-y-0.5 transition-transform"
+          class="text-lg pt-2 pb-2 text-primary hover:cursor-pointer transform hover:-translate-y-0.5 transition-transform"
         >
           {entry.data.title}
         </h2>

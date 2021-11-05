@@ -34,6 +34,11 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
     dev = false,
   } = options;
 
+  const staticPages = [
+    path.join(process.cwd(), pageRoot, 'me.tsx'),
+    path.join(process.cwd(), pageRoot, 'privacy.tsx'),
+  ];
+
   const homePages = [
     path.join(process.cwd(), pageRoot, 'index.tsx'),
   ];
@@ -116,42 +121,31 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
       throw new Error(`Failed to find the compiled css.`);
     }
 
-    for (const homePage of homePages) {
+    const buildPage = async (
+      entryPoint: string,
+      title: string,
+      target: string,
+      props: any,
+      clientProps: any = props,
+    ) => {
       const compiledScript = Object.entries(meta.outputs)
-        .find(([, meta]) => path.resolve(meta.entryPoint ?? '') === homePage)
+        .find(([, meta]) => path.resolve(meta.entryPoint ?? '') === entryPoint)
         ?.[0];
-
       if (compiledScript === undefined) {
-        throw new Error(`Failed to find the compiled script for page ${homePage}. `);
+        throw new Error(`Failed to find the compiled script for page ${entryPoint}. `);
       }
 
-      const target = path.join(
-        outdir,
-        path.relative(
-          pageRoot,
-          homePage.replace(/\.tsx$/, '.html'),
-        )
-      );
-
-      const renderModule = homePage;
       const compiledScriptImportUrl = path.relative(path.dirname(target), compiledScript);
       const compiledCssImportUrl = path.relative(path.dirname(target), compiledCss);
 
-      await Promise.all([
-        loadBlogsPromise,
-        copyPublicPromise,
-      ]);
 
       let html = await createPageHtml(
-        renderModule,
+        entryPoint,
         compiledScriptImportUrl,
         compiledCssImportUrl,
-        'Chenyu\'s Blog',
-        {
-          entries: blogManager.blogs.map((b) => ({
-            data: b.data,
-          }))
-        },
+        title,
+        props,
+        clientProps,
       );
 
       if (!dev) {
@@ -166,16 +160,52 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
       } finally {
         await handle.close();
       }
+    };
+
+    for (const staticPage of staticPages) {
+      const target = path.join(
+        outdir,
+        path.relative(
+          pageRoot,
+          staticPage.replace(/\.tsx$/, '.html'),
+        )
+      );
+
+      await buildPage(
+        staticPage,
+        'Chenyu\'s Blog',
+        target,
+        null,
+      );
+    }
+
+    for (const homePage of homePages) {
+      const target = path.join(
+        outdir,
+        path.relative(
+          pageRoot,
+          homePage.replace(/\.tsx$/, '.html'),
+        )
+      );
+
+      await Promise.all([
+        loadBlogsPromise,
+        copyPublicPromise,
+      ]);
+
+      await buildPage(
+        homePage,
+        'Chenyu\'s Blog',
+        target,
+        {
+          entries: blogManager.blogs.map((b) => ({
+            data: b.data,
+          }))
+        },
+      );
     }
 
     for (const blogPage of blogPages) {
-      const compiledScript = Object.entries(meta.outputs)
-        .find(([, meta]) => path.resolve(meta.entryPoint ?? '') === blogPage)
-        ?.[0];
-      if (compiledScript === undefined) {
-        throw new Error(`Failed to find the compiled script for page ${blogPage}. `);
-      }
-
       let i = 0;
 
       for (const blog of blogManager.blogs) {
@@ -186,10 +216,6 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
             blogPage.replace(/index\.tsx$/, `${blog.data.slug}.html`),
           ),
         );
-
-        const compiledScriptImportUrl = path.relative(path.dirname(target), compiledScript);
-        const compiledCssImportUrl = path.relative(path.dirname(target), compiledCss);
-        const renderModule = blogPage;
 
         const props = {
           entry: {
@@ -207,33 +233,21 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
           },
         };
 
-        let html = await createPageHtml(
-          renderModule,
-          compiledScriptImportUrl,
-          compiledCssImportUrl,
-          blog.data.title + ' - Chenyu\'s Blog',
-          props,
-          {
-            ...props,
-            entry: {
-              ...props.entry,
-              html: '',
-            },
+        const clientProps = {
+          ...props,
+          entry: {
+            ...props.entry,
+            html: '',
           },
+        };
+
+        await buildPage(
+          blogPage,
+          `${blog.data.title} - Chenyu\'s Blog`,
+          target,
+          props,
+          clientProps,
         );
-
-        if (!dev) {
-          html = await minifyHtml(html);
-        }
-
-        await ensureDir(path.dirname(target));
-        const handle = await fs.open(target, 'w');
-
-        try {
-          await fs.writeFile(handle, html);
-        } finally {
-          await handle.close();
-        }
 
         i++;
       }
@@ -244,6 +258,7 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
 
   await build({
     entryPoints: [
+      ...staticPages,
       ...homePages,
       ...blogPages,
       css,

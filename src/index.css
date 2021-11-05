@@ -1,13 +1,25 @@
 @windicss;
 
 body {
-  font-family: "MerriweatherSans Regular", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-family: "MerriweatherSans", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
 @font-face {
-  font-family: "MerriweatherSans Regular";
+  font-family: "MerriweatherSans";
   src: url("./assets/MerriweatherSans-Regular.ttf");
   font-display: swap;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "MerriweatherSans";
+  src: url("./assets/MerriweatherSans-Light.ttf");
+  font-display: swap;
+  font-weight: 300;
+}
+
+ul, ol {
+  list-style: initial;
 }
 
 .bg {
@@ -213,4 +225,16 @@ body {
 
 .hljs-string {
   @apply text-yellow-300;
+}
+
+.link-primary {
+  @apply text-primary hover:text-white hover:cursor-pointer;
+}
+
+.me ol {
+  @apply ml-4;
+}
+
+.me li {
+  @apply font-light;
 }

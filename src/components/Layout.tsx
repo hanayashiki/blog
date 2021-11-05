@@ -36,7 +36,7 @@ export default function Layout(props: { children: ComponentChildren }) {
         </div>
 
         <a href="/">
-          <h1 class="text-center border-b-[1px] py-3 text-2xl mx-3">
+          <h1 class="text-center border-b-[1px] py-3 text-2xl mx-3 font-bold">
             Chenyu's Blog
           </h1>
         </a>
@@ -47,7 +47,24 @@ export default function Layout(props: { children: ComponentChildren }) {
 
         <div class="h-px bg-white mx-3" />
 
-        <div class="flex flex-col py-8 mx-5 gap-y-8">
+        <div class="flex flex-col py-8 mx-5 gap-y-4">
+          <div class="flex flex-row justify-center text-primary text-sm gap-x-2">
+            <a href="/" class="hover:text-white">
+              Home
+            </a>
+            ·
+            <a href="/me" class="hover:text-white">
+              Me
+            </a>
+            ·
+            <a href="/privacy" class="hover:text-white">
+              Privacy
+            </a>
+            ·
+            <a href="https://github.com/hanayashiki/blog" aria-label="Source Code on GitHub" target="_blank" rel="noreferrer" class="hover:text-white">
+              Source
+            </a>
+          </div>
           <div class="flex flex-row justify-center gap-x-4">
             <a href="https://t.me/chenyusblog" aria-label="Telegram" target="_blank" rel="noreferrer" class="text-gray-300 hover:text-primary">
               <Telegram fill="currentColor" />
