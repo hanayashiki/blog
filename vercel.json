@@ -1,6 +1,8 @@
 {
   "rewrites": [
-    { "source": "/blogs/:match*", "destination": "/blogs/:match*.html" }
+    { "source": "/blogs/:match*", "destination": "/blogs/:match*.html" },
+    { "source": "/me", "destination": "/me.html" },
+    { "source": "/privacy", "destination": "/privacy.html" }
   ],
   "headers": [
     {
