@@ -10,7 +10,7 @@ export const pluginPostcss = (plugins?: AcceptedPlugin[]): Plugin => {
     setup(build) {
       build.onLoad({ filter: /\.css$/ }, async ({ path }) => {
         const content = await fs.readFile(path);
-        const result = await processor.process(content);
+        const result = await processor.process(content, { from: path });
         return {
           contents: result.toString(),
           loader: 'css',

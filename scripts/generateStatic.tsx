@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 import { h, FunctionComponent } from 'preact';
 import { minify as _minifyHtml } from 'html-minifier-terser';
 import render from 'preact-render-to-string';
-import tailwindcss from 'tailwindcss';
+import pluginWindi from 'postcss-windicss';
 import { createTemplate } from './createTemplate';
 import copyfiles from 'copyfiles';
 import { pluginPostcss } from './pluginPostcss';
@@ -265,7 +265,9 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
     plugins: [
       pluginPostcss([
         // @ts-ignore
-        tailwindcss((await import('../tailwind.config.cjs')).default),
+        pluginWindi(
+          (await import('../windi.config')).default
+        ),
       ]),
       {
         name: 'blog',
