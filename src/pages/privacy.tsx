@@ -14,7 +14,7 @@ export default function Privacy() {
         <br />
         It is hosted on <a class="link-primary" href="https://vercel.com/">vercel.com</a>,
         {' '}
-        so your data would be subjected to their Privacy Policy.
+        so your data would be subject to their Privacy Policy.
         <br />
         <br />
 
