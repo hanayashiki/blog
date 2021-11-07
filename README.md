@@ -1,4 +1,4 @@
-# Personal blog powered by esbuild, preact and tailwindcss
+# Personal blog powered by esbuild, preact and windi
 
 About this project (in Chinese):
 
