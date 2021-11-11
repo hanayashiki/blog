@@ -142,9 +142,7 @@ export default function Me() {
                 </a>
               </li>
               <li>
-                <a class="link-primary" href="https://member.d2dasia.com" target="_blank" rel="noreferrer">
-                  Uptime Monitor (Fullstack with React, NextJS, GraphQL)
-                </a>
+                Uptime Monitor (Fullstack with React, NextJS, GraphQL)
               </li>
             </ol>
           </li>
