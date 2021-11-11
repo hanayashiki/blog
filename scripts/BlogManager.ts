@@ -44,6 +44,7 @@ export class BlogManager {
 
   createMarkdownIt() {
     return new MarkdownIt({
+      html: true,
       highlight: (str, lang) => {
         if (lang && hljs.getLanguage(lang)) {
           return hljs.highlight(str, { language: lang }).value;
