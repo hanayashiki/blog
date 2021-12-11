@@ -4,10 +4,12 @@ import sirv from 'sirv';
 import compression from 'compression';
 import { logPrefix } from './common';
 
+const port = 5001
+
 polka().use(
   compression(),
   sirv('./dist'),
-).listen(5001, (error: any) => {
+).listen(port, (error: any) => {
   if (error) throw error;
-  console.log(`${logPrefix}serve started on port 5001`);
+  console.log(`${logPrefix}serve started on http://localhost:${port}`);
 });

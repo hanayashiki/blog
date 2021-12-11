@@ -224,7 +224,7 @@ console.log(JSON.stringify(parseExpr(), null, 2));
     }
     ```
 
-上面那段程序不同于传统的自顶向下分析。一般的自顶向下分析中，文法元素通常和解析函数一一对应，并且每个解析函数只能返回一个'固定类型的元素。这里的 `parseExpr` 则可以返回任意的 `type = 'BinaryExpression' | 'NumericLiteral'` 的节点，而 `parseSuffix` 可以处理任何中缀的运算符，代码也非常简洁。那么它是如何运作的呢？
+上面那段程序不同于传统的自顶向下分析。一般的自顶向下分析中，文法元素通常和解析函数一一对应，并且每个解析函数只能返回一个固定类型的元素。这里的 `parseExpr` 则可以返回任意的 `type = 'BinaryExpression' | 'NumericLiteral'` 的节点，而 `parseSuffix` 可以处理任何中缀的运算符，代码也非常简洁。那么它是如何运作的呢？
 
 我们首先观察调用关系。顶层函数是 `parseExpr`，它会先调用 `parsePrefix` 处理一个 `numeric` 符号，然后调用 `parseSuffix`。`parseSuffix` 要么直接返回，要么递归调用 `parseExpr`。
 

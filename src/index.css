@@ -227,6 +227,10 @@ ul, ol {
   @apply text-yellow-300;
 }
 
+.hljs-meta {
+  @apply text-green-300;
+}
+
 .link-primary {
   @apply text-primary hover:text-white hover:cursor-pointer;
 }
