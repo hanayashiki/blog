@@ -1,6 +1,8 @@
 import { h } from 'preact';
 import { Blog } from '@models/Blog';
 import Layout from '@components/Layout';
+import Share from '@components/icons/Share';
+import copy from 'copy-to-clipboard';
 
 function BlogEntry(props: { entry: Blog }) {
   const {
@@ -8,6 +10,11 @@ function BlogEntry(props: { entry: Blog }) {
   } = props;
 
   const date = new Date(entry.data.date);
+
+  const onShare = () => {
+    copy(`${entry.data.title} https://blog.chenyu.pw/blogs/${entry.data.slug}`);
+    alert('链接已经复制!')
+  }
 
   return (
     <div class="py-4">
@@ -28,6 +35,12 @@ function BlogEntry(props: { entry: Blog }) {
       <p class="text-sm">
         {entry.data.abstract}
       </p>
+
+      <div className="pt-4"> 
+        <a onClick={onShare} className="text-gray-500 hover:text-primary hover:cursor-pointer">
+          <Share fill="currentColor" size={18} />
+        </a>
+      </div>
     </div>
   );
 }
