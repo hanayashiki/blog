@@ -3,7 +3,7 @@ import { Blog } from '@models/Blog';
 import Layout from '@components/Layout';
 import StaticBoundary from '@components/StaticBoundary';
 import Share from '@components/icons/Share';
-import copy from 'copy-to-clipboard';
+import { shareBlog } from '@libs/share';
 
 export default function Blog(props: { entry: Blog, prev?: Blog, next?: Blog, }) {
   const {
@@ -14,10 +14,7 @@ export default function Blog(props: { entry: Blog, prev?: Blog, next?: Blog, }) 
 
   const date = new Date(entry.data.date);
 
-  const onShare = () => {
-    copy(`${entry.data.title} https://blog.chenyu.pw/blogs/${entry.data.slug}`);
-    alert('链接已经复制!')
-  }
+  const onShare = () => shareBlog(entry);
 
   return (
     <Layout>

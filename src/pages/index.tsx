@@ -2,7 +2,7 @@ import { h } from 'preact';
 import { Blog } from '@models/Blog';
 import Layout from '@components/Layout';
 import Share from '@components/icons/Share';
-import copy from 'copy-to-clipboard';
+import { shareBlog } from '@libs/share';
 
 function BlogEntry(props: { entry: Blog }) {
   const {
@@ -11,10 +11,7 @@ function BlogEntry(props: { entry: Blog }) {
 
   const date = new Date(entry.data.date);
 
-  const onShare = () => {
-    copy(`${entry.data.title} https://blog.chenyu.pw/blogs/${entry.data.slug}`);
-    alert('链接已经复制!')
-  }
+  const onShare = () => shareBlog(entry);
 
   return (
     <div class="py-4">
