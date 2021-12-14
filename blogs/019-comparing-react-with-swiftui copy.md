@@ -1,7 +1,7 @@
 ---
 title: 入坑 iOS 开发：React 和 SwiftUI 的对比
 slug: comparing-react-with-swiftui
-date: 2021-12-19
+date: 2021-12-09
 abstract: 初尝 SwiftUI 和原生 iOS 编程，有哪些不同？
 ---
 
