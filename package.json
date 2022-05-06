@@ -43,6 +43,7 @@
     "postcss-windicss": "^1.0.0",
     "preact-render-to-string": "^5.1.19",
     "sirv": "^1.0.18",
+    "sitemap": "^7.1.1",
     "ts-node": "^10.4.0",
     "tsconfig-paths": "^3.11.0",
     "typescript": "^4.4.4",

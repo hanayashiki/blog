@@ -1,19 +1,22 @@
-import { build, BuildOptions, BuildResult } from 'esbuild';
-import path from 'path';
-import fs from 'fs/promises';
-import { h, FunctionComponent } from 'preact';
-import { minify as _minifyHtml } from 'html-minifier-terser';
-import render from 'preact-render-to-string';
-import pluginWindi from 'postcss-windicss';
-import { createTemplate } from './createTemplate';
-import copyfiles from 'copyfiles';
-import { pluginPostcss } from './pluginPostcss';
-import polka from 'polka';
+import { build, BuildOptions, BuildResult } from "esbuild";
+import path from "path";
+import fs from "fs/promises";
+import { h, FunctionComponent } from "preact";
+import { minify as _minifyHtml } from "html-minifier-terser";
+import render from "preact-render-to-string";
+import pluginWindi from "postcss-windicss";
+import { SitemapStream, streamToPromise } from "sitemap";
 
-import sirv from 'sirv';
-import { BlogManager } from './BlogManager';
-import { ensureDir } from 'fs-extra';
-import { logPrefix } from './common';
+import { createTemplate } from "./createTemplate";
+import copyfiles from "copyfiles";
+import { pluginPostcss } from "./pluginPostcss";
+import polka from "polka";
+
+import sirv from "sirv";
+import { BlogManager } from "./BlogManager";
+import { ensureDir } from "fs-extra";
+import { logPrefix } from "./common";
+import { writeFile } from "fs";
 
 export interface GenerateStaticOptions {
   pageRoot: string;
@@ -34,37 +37,41 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
     dev = false,
   } = options;
 
+  const sitemapStream = new SitemapStream({
+    hostname: "https://blog.chenyu.pw",
+  });
+
   const staticPages = [
-    path.join(process.cwd(), pageRoot, 'me.tsx'),
-    path.join(process.cwd(), pageRoot, 'privacy.tsx'),
+    path.join(process.cwd(), pageRoot, "me.tsx"),
+    path.join(process.cwd(), pageRoot, "privacy.tsx"),
   ];
 
-  const homePages = [
-    path.join(process.cwd(), pageRoot, 'index.tsx'),
-  ];
+  const homePages = [path.join(process.cwd(), pageRoot, "index.tsx")];
 
-  const blogPages = [
-    path.join(process.cwd(), pageRoot, 'blogs', 'index.tsx'),
-  ];
+  const blogPages = [path.join(process.cwd(), pageRoot, "blogs", "index.tsx")];
 
-  const clientEntry = (await fs.readFile(require.resolve('./client/entry.tsx'))).toString();
+  const clientEntry = (
+    await fs.readFile(require.resolve("./client/entry.tsx"))
+  ).toString();
 
   const blogManager = new BlogManager(blogRoot);
 
-  let loadBlogsPromise: Promise<void> | undefined;;
+  let loadBlogsPromise: Promise<void> | undefined;
   let copyPublicPromise: Promise<void> | undefined;
 
   let t1: number | undefined;
 
   if (dev) {
-    polka().use(
-      sirv(outdir, {
-        dev: true,
-      })
-    ).listen(3001, (error: any) => {
-      if (error) throw error;
-      console.log(`${logPrefix}dev started on port 3001`);
-    });
+    polka()
+      .use(
+        sirv(outdir, {
+          dev: true,
+        })
+      )
+      .listen(3001, (error: any) => {
+        if (error) throw error;
+        console.log(`${logPrefix}dev started on port 3001`);
+      });
   }
 
   const minifyHtml = async (html: string) => {
@@ -93,15 +100,11 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
       await fs.rm(outdir, {
         recursive: true,
       });
-    } catch { }
+    } catch {}
     await ensureDir(path.dirname(outdir));
 
-    copyPublicPromise = new Promise(
-      (r) => copyfiles(
-        ['public/**', outdir],
-        { up: true },
-        () => r(),
-      ),
+    copyPublicPromise = new Promise((r) =>
+      copyfiles(["public/**", outdir], { up: true }, () => r())
     );
     loadBlogsPromise = blogManager.loadBlogs();
   };
@@ -113,9 +116,9 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
       console.info(`${logPrefix}failed to build`);
       return;
     }
-    const compiledCss = Object.entries(meta.outputs)
-      .find(([, meta]) => meta.entryPoint?.endsWith('/index.css'))
-      ?.[0];
+    const compiledCss = Object.entries(meta.outputs).find(([, meta]) =>
+      meta.entryPoint?.endsWith("/index.css")
+    )?.[0];
 
     if (compiledCss === undefined) {
       throw new Error(`Failed to find the compiled css.`);
@@ -126,18 +129,25 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
       title: string,
       target: string,
       props: any,
-      clientProps: any = props,
+      clientProps: any = props
     ) => {
-      const compiledScript = Object.entries(meta.outputs)
-        .find(([, meta]) => path.resolve(meta.entryPoint ?? '') === entryPoint)
-        ?.[0];
+      const compiledScript = Object.entries(meta.outputs).find(
+        ([, meta]) => path.resolve(meta.entryPoint ?? "") === entryPoint
+      )?.[0];
       if (compiledScript === undefined) {
-        throw new Error(`Failed to find the compiled script for page ${entryPoint}. `);
+        throw new Error(
+          `Failed to find the compiled script for page ${entryPoint}. `
+        );
       }
 
-      const compiledScriptImportUrl = path.relative(path.dirname(target), compiledScript);
-      const compiledCssImportUrl = path.relative(path.dirname(target), compiledCss);
-
+      const compiledScriptImportUrl = path.relative(
+        path.dirname(target),
+        compiledScript
+      );
+      const compiledCssImportUrl = path.relative(
+        path.dirname(target),
+        compiledCss
+      );
 
       let html = await createPageHtml(
         entryPoint,
@@ -145,7 +155,7 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
         compiledCssImportUrl,
         title,
         props,
-        clientProps,
+        clientProps
       );
 
       if (!dev) {
@@ -153,7 +163,7 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
       }
 
       await ensureDir(path.dirname(target));
-      const handle = await fs.open(target, 'w');
+      const handle = await fs.open(target, "w");
 
       try {
         await fs.writeFile(handle, html);
@@ -165,44 +175,33 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
     for (const staticPage of staticPages) {
       const target = path.join(
         outdir,
-        path.relative(
-          pageRoot,
-          staticPage.replace(/\.tsx$/, '.html'),
-        )
+        path.relative(pageRoot, staticPage.replace(/\.tsx$/, ".html"))
       );
 
-      await buildPage(
-        staticPage,
-        'Chenyu\'s Blog',
-        target,
-        null,
-      );
+      await buildPage(staticPage, "Chenyu's Blog", target, null);
+
+      sitemapStream.write({
+        url: target.replace('dist/', ''),
+        changefreq: "monthly",
+        priority: 0.6,
+      });
     }
 
     for (const homePage of homePages) {
       const target = path.join(
         outdir,
-        path.relative(
-          pageRoot,
-          homePage.replace(/\.tsx$/, '.html'),
-        )
+        path.relative(pageRoot, homePage.replace(/\.tsx$/, ".html"))
       );
 
-      await Promise.all([
-        loadBlogsPromise,
-        copyPublicPromise,
-      ]);
+      await Promise.all([loadBlogsPromise, copyPublicPromise]);
 
-      await buildPage(
-        homePage,
-        'Chenyu\'s Blog',
-        target,
-        {
-          entries: blogManager.blogs.map((b) => ({
-            data: b.data,
-          }))
-        },
-      );
+      await buildPage(homePage, "Chenyu's Blog", target, {
+        entries: blogManager.blogs.map((b) => ({
+          data: b.data,
+        })),
+      });
+
+      sitemapStream.write({ url: target.replace('dist/', ''), changefreq: "daily", priority: 1 });
     }
 
     for (const blogPage of blogPages) {
@@ -213,23 +212,23 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
           outdir,
           path.relative(
             pageRoot,
-            blogPage.replace(/index\.tsx$/, `${blog.data.slug}.html`),
-          ),
+            blogPage.replace(/index\.tsx$/, `${blog.data.slug}.html`)
+          )
         );
 
         const props = {
           entry: {
             ...blog,
-            content: '',
+            content: "",
             html: blogManager.renderBlogToHtml(blog),
           },
           prev: blogManager.blogs[i + 1] && {
             ...blogManager.blogs[i + 1],
-            content: '',
+            content: "",
           },
           next: blogManager.blogs[i - 1] && {
             ...blogManager.blogs[i - 1],
-            content: '',
+            content: "",
           },
         };
 
@@ -237,7 +236,7 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
           ...props,
           entry: {
             ...props.entry,
-            html: '',
+            html: "",
           },
         };
 
@@ -246,73 +245,84 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
           `${blog.data.title} - Chenyu\'s Blog`,
           target,
           props,
-          clientProps,
+          clientProps
         );
+
+        sitemapStream.write({
+          url: target.replace('dist/', ''),
+          changefreq: "monthly",
+          priority: 0.9,
+        });
 
         i++;
       }
     }
 
-    console.info(`${logPrefix}pages successfully built within ${new Date().getTime() - t1!}ms`);
+    sitemapStream.end();
+    const buffer = await streamToPromise(sitemapStream);
+
+    await fs.writeFile(path.join(outdir, "sitemap.xml"), buffer);
+    console.info(
+      `${logPrefix}pages successfully built within ${
+        new Date().getTime() - t1!
+      }ms`
+    );
   };
 
   await build({
-    entryPoints: [
-      ...staticPages,
-      ...homePages,
-      ...blogPages,
-      css,
-    ],
-    entryNames: '[name]-[hash]',
+    entryPoints: [...staticPages, ...homePages, ...blogPages, css],
+    entryNames: "[name]-[hash]",
     outdir,
-    jsxFactory: 'h',
-    jsxFragment: 'Fragment',
+    jsxFactory: "h",
+    jsxFragment: "Fragment",
     metafile: true,
     bundle: true,
-    format: 'esm',
+    format: "esm",
     outExtension: {
-      '.js': '.mjs',
+      ".js": ".mjs",
     },
     loader: {
-      '.ttf': 'file',
-      '.webp': 'file',
+      ".ttf": "file",
+      ".webp": "file",
     },
     plugins: [
       pluginPostcss([
         // @ts-ignore
-        pluginWindi(
-          (await import('../windi.config')).default
-        ),
+        pluginWindi((await import("../windi.config")).default),
       ]),
       {
-        name: 'blog',
+        name: "blog",
         setup(build) {
           build.onStart(onStart);
           build.onEnd(onEnd);
           build.onLoad({ filter: /pages\/.*\.tsx/ }, async ({ path }) => {
             const input = (await fs.readFile(path)).toString();
-            const exportDefaultName = /^\s+export\s+default\s+function\s+(\w+)/m.exec(input)?.[1];
+            const exportDefaultName =
+              /^\s+export\s+default\s+function\s+(\w+)/m.exec(input)?.[1];
             if (exportDefaultName === undefined) {
-              throw new Error(`Didn't find a default export for page: ${path}. Did you use 'export default function PageName() {}' to define the page component?`);
+              throw new Error(
+                `Didn't find a default export for page: ${path}. Did you use 'export default function PageName() {}' to define the page component?`
+              );
             }
 
-            let transformedInput = input
-              + '\n'
-              + clientEntry.replace(/__PAGE__/g, exportDefaultName);
+            let transformedInput =
+              input +
+              "\n" +
+              clientEntry.replace(/__PAGE__/g, exportDefaultName);
 
             return {
               contents: transformedInput,
-              loader: 'tsx',
+              loader: "tsx",
             };
           });
-        }
+        },
       },
     ],
     watch: dev === true,
     minify: dev === false,
     ...esbuildOptions,
   });
-}
+};
 
 export interface PageModule {
   default: FunctionComponent;
@@ -324,10 +334,10 @@ export const createPageHtml = async (
   compiledCss: string,
   title: string,
   props: any,
-  clientProps = props,
+  clientProps = props
 ) => {
   for (const key of Object.keys(require.cache)) {
-    if (key.startsWith(path.join(process.cwd(), 'src'))) {
+    if (key.startsWith(path.join(process.cwd(), "src"))) {
       delete require.cache[key]; // To allow hot reloading
     }
   }
@@ -340,7 +350,7 @@ export const createPageHtml = async (
     compiledCss,
     title,
     prerendered,
-    clientProps,
+    clientProps
   );
 
   return html;
