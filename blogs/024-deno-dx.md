@@ -2,7 +2,7 @@
 title: 谈 Deno Fresh 工具链开发体验
 slug: deno-dx
 date: 2022-07-31
-abstract: 彻底解析 Stacking Context 如何影响元素的先后关系。
+abstract: 如果全部都用 Deno 的工具，写网站是什么样子？
 ---
 
 ## 什么是 Deno？什么是 Fresh？
