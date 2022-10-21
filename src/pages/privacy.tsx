@@ -2,9 +2,9 @@ import { h } from 'preact';
 import { Blog } from '@models/Blog';
 import Layout from '@components/Layout';
 
-export default function Privacy() {
+export default function Privacy({ years }: { years: string[] }) {
   return (
-    <Layout>
+    <Layout years={years}>
       <div className="me px-4 font-light leading-loose">
         <h2 className="font-bold text-xl my-8">
           Privacy

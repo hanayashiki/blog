@@ -5,8 +5,9 @@ import StaticBoundary from '@components/StaticBoundary';
 import Share from '@components/icons/Share';
 import { shareBlog } from '@libs/share';
 
-export default function Blog(props: { entry: Blog, prev?: Blog, next?: Blog, }) {
+export default function Blog(props: { years: string[], entry: Blog, prev?: Blog, next?: Blog, }) {
   const {
+    years,
     entry,
     prev,
     next,
@@ -17,7 +18,7 @@ export default function Blog(props: { entry: Blog, prev?: Blog, next?: Blog, }) 
   const onShare = () => shareBlog(entry);
 
   return (
-    <Layout>
+    <Layout years={years}>
       <h2 class="text-3xl py-4 text-primary leading-relaxed">
         {entry.data.title}
       </h2>

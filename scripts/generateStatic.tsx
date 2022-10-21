@@ -149,13 +149,18 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
         compiledCss
       );
 
+      years.sort((a, b) => Number(b) - Number(a));
+      const extraProps = {
+        years,
+      };
+
       let html = await createPageHtml(
         entryPoint,
         compiledScriptImportUrl,
         compiledCssImportUrl,
         title,
-        props,
-        clientProps
+        { ...props, ...extraProps },
+        { ...clientProps, ...extraProps }
       );
 
       if (!dev) {
@@ -172,6 +177,27 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
       }
     };
 
+    await Promise.all([loadBlogsPromise, copyPublicPromise]);
+
+    const years = [
+      ...new Set(
+        blogManager.blogs.map((b) => b.data.date.getFullYear().toString())
+      ).values(),
+    ];
+
+    for (const year of years) {
+      const target = path.join(outdir, `${year}.html`);
+
+      await buildPage(homePages[0], `${year} - Chenyu's Blog`, target, {
+        entries: blogManager.blogs
+          .filter((b) => b.data.date.getFullYear().toString() === year)
+          .map((b) => ({
+            data: b.data,
+          })),
+        currentYear: year,
+      });
+    }
+
     for (const staticPage of staticPages) {
       const target = path.join(
         outdir,
@@ -181,7 +207,7 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
       await buildPage(staticPage, "Chenyu's Blog", target, null);
 
       sitemapStream.write({
-        url: target.replace('dist/', ''),
+        url: target.replace("dist/", ""),
         changefreq: "monthly",
         priority: 0.6,
       });
@@ -193,15 +219,17 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
         path.relative(pageRoot, homePage.replace(/\.tsx$/, ".html"))
       );
 
-      await Promise.all([loadBlogsPromise, copyPublicPromise]);
-
       await buildPage(homePage, "Chenyu's Blog", target, {
         entries: blogManager.blogs.map((b) => ({
           data: b.data,
         })),
       });
 
-      sitemapStream.write({ url: target.replace('dist/', ''), changefreq: "daily", priority: 1 });
+      sitemapStream.write({
+        url: target.replace("dist/", ""),
+        changefreq: "daily",
+        priority: 1,
+      });
     }
 
     for (const blogPage of blogPages) {
@@ -249,7 +277,7 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
         );
 
         sitemapStream.write({
-          url: target.replace('dist/', ''),
+          url: target.replace("dist/", ""),
           changefreq: "monthly",
           priority: 0.9,
         });
