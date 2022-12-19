@@ -61,7 +61,7 @@ function PublicationEntry(props: PublicationEntryProps) {
 export default function Me({ years }: { years: string[] }) {
   return (
     <Layout years={years}>
-      <div className="me px-4 font-light leading-loose">
+      <div className="me px-4 font-light leading-loose pt-[2rem]">
         <ol>
           <li>
             Frontend developer at{" "}
