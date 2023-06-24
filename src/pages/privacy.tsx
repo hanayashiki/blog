@@ -27,12 +27,13 @@ export default function Privacy({ years }: { years: string[] }) {
           I do not collect any personal identifiable data.
         </b>
         {' '}
-        You may check the <a class="link-primary" href="https://plausible.monoid.co.jp/blog.chenyu.pw">Plausbile Dashboard</a>
+        You may check the <a class="link-primary" href="https://plausible.monoid.co.jp/blog.chenyu.pw">Plausible Dashboard</a>
         {' '}
         to view the public traffic and know what data I'm collecting.
         <br />
         <br />
         2021-11-05
+        <br />
       </div>
     </Layout>
   );
