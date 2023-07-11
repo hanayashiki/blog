@@ -34,6 +34,7 @@ export default function Privacy({ years }: { years: string[] }) {
         <br />
         2021-11-05
         <br />
+        <br />
       </div>
     </Layout>
   );
