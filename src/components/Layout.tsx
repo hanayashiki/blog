@@ -14,10 +14,11 @@ function Background() {
 
   return (
     <div
-      class="bg sm:h-[512px] h-[256px] bg-bottom bg-cover bg-no-repeat"
+      class="bg sm:h-[512px] h-[256px] bg-cover bg-no-repeat"
       style={{
         willChange: "transform",
         transform: `translateY(${scrollY / 4}px)`,
+        backgroundPosition: "50% 60%",
       }}
     />
   );

@@ -311,7 +311,7 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
     },
     loader: {
       ".ttf": "file",
-      ".webp": "file",
+      ".png": "file",
     },
     plugins: [
       pluginPostcss([
