@@ -1,8 +1,10 @@
 import { h, ComponentChildren, Fragment } from "preact";
+import { useState } from "preact/hooks";
 import useRaf from "@libs/useRaf";
 import { Github } from "./icons/Github";
 import Telegram from "./icons/Telegram";
 import { Plausible } from "./icons/Plausible";
+import { Search } from "./icons/Search";
 
 function Background() {
   useRaf();
@@ -28,8 +30,10 @@ export default function Layout(props: {
   currentYear?: string;
   years: string[];
   children: ComponentChildren;
+  onToggleSearch?: () => void;
+  isSearchVisible?: boolean;
 }) {
-  const { currentYear, years, children } = props;
+  const { currentYear, years, children, onToggleSearch, isSearchVisible = true } = props;
 
   return (
     <div class="bg-gray-900 min-h-screen">
@@ -39,9 +43,19 @@ export default function Layout(props: {
         </div>
 
         <div class="border-b-[1px] py-3 mx-3">
-          <h1 class="text-center text-2xl font-bold">
-            <a href="/">Chenyu's Blog</a>
-          </h1>
+          <div class="flex items-center justify-between relative">
+            <div class="w-10"></div> {/* Spacer to balance the layout */}
+            <h1 class="text-2xl font-bold absolute left-1/2 transform -translate-x-1/2">
+              <a href="/">Chenyu's Blog</a>
+            </h1>
+            <button 
+              onClick={onToggleSearch} 
+              class="p-1 rounded-full hover:bg-gray-700 transition-colors"
+              aria-label={isSearchVisible ? "Hide search" : "Show search"}
+            >
+              <Search size={20} fill={isSearchVisible ? "#6366f1" : "currentColor"} />
+            </button>
+          </div>
         </div>
 
         <div class="px-4">{children}</div>

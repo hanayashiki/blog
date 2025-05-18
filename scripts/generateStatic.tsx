@@ -68,9 +68,9 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
           dev: true,
         })
       )
-      .listen(3001, (error: any) => {
+      .listen(12000, "0.0.0.0", (error: any) => {
         if (error) throw error;
-        console.log(`${logPrefix}dev started on port 3001`);
+        console.log(`${logPrefix}dev started on port 12000`);
       });
   }
 
