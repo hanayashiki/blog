@@ -4,12 +4,15 @@ import sirv from 'sirv';
 import compression from 'compression';
 import { logPrefix } from './common';
 
-const port = 12000
+// Get port from environment variable or use default
+const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+// Get host from environment variable or use default
+const host = process.env.HOST || 'localhost';
 
 polka().use(
   compression(),
   sirv('./dist'),
-).listen(port, "0.0.0.0", (error: any) => {
+).listen(port, host, (error: any) => {
   if (error) throw error;
-  console.log(`${logPrefix}serve started on http://0.0.0.0:${port}`);
+  console.log(`${logPrefix}serve started on http://${host}:${port}`);
 });

@@ -53,7 +53,7 @@ export default function Layout(props: {
               class="p-1 rounded-full hover:bg-gray-700 transition-colors"
               aria-label={isSearchVisible ? "Hide search" : "Show search"}
             >
-              <Search size={20} fill={isSearchVisible ? "#6366f1" : "currentColor"} />
+              <Search size={20} fill={isSearchVisible ? "white" : "#6366f1"} />
             </button>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { h } from "preact";
-import { useState } from "preact/hooks";
+import { useState, useEffect } from "preact/hooks";
 import { Blog } from "@models/Blog";
 import Layout from "@components/Layout";
 import Share from "@components/icons/Share";
@@ -48,11 +48,42 @@ export default function HomePage(props: {
   const [isSearchVisible, setIsSearchVisible] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleSearchResults = (results: Blog[], term: string) => {
-    setFilteredEntries(results);
-    setHasSearched(true);
+  // Function to perform search
+  const performSearch = (term: string) => {
     setSearchTerm(term);
+    setHasSearched(true);
+    
+    if (term.trim() === "") {
+      // If search is empty, return all entries
+      setFilteredEntries(entries);
+      return;
+    }
+    
+    const lowerCaseTerm = term.toLowerCase();
+    
+    // Filter entries based on search term
+    const results = entries.filter((entry) => {
+      const titleMatch = entry.data.title.toLowerCase().includes(lowerCaseTerm);
+      const abstractMatch = entry.data.abstract?.toLowerCase().includes(lowerCaseTerm) || false;
+      const contentMatch = entry.content ? entry.content.toLowerCase().includes(lowerCaseTerm) : false;
+      
+      return titleMatch || abstractMatch || contentMatch;
+    });
+    
+    // Log for debugging
+    console.log(`Search term: "${term}", Results: ${results.length}`);
+    
+    setFilteredEntries(results);
   };
+  
+  // Update filtered entries when entries change
+  useEffect(() => {
+    if (searchTerm) {
+      performSearch(searchTerm);
+    } else {
+      setFilteredEntries(entries);
+    }
+  }, [entries]);
   
   const toggleSearch = () => {
     const newVisibility = !isSearchVisible;
@@ -75,8 +106,7 @@ export default function HomePage(props: {
     >
       {isSearchVisible && (
         <SearchBox 
-          entries={entries} 
-          onSearchResults={handleSearchResults} 
+          onSearch={performSearch} 
           initialSearchTerm={searchTerm}
         />
       )}

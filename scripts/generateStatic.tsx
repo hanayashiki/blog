@@ -68,10 +68,14 @@ export const generateStatic = async (options: GenerateStaticOptions) => {
           dev: true,
         })
       )
-      .listen(12000, "0.0.0.0", (error: any) => {
-        if (error) throw error;
-        console.log(`${logPrefix}dev started on port 12000`);
-      });
+      .listen(
+        process.env.PORT ? parseInt(process.env.PORT, 10) : 3000, 
+        process.env.HOST || 'localhost', 
+        (error: any) => {
+          if (error) throw error;
+          console.log(`${logPrefix}dev started on port ${process.env.PORT || 3000}`);
+        }
+      );
   }
 
   const minifyHtml = async (html: string) => {
