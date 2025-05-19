@@ -2,7 +2,6 @@ import { h, ComponentChildren, Fragment } from "preact";
 import useRaf from "@libs/useRaf";
 import { Github } from "./icons/Github";
 import Telegram from "./icons/Telegram";
-import { Plausible } from "./icons/Plausible";
 
 function Background() {
   useRaf();
@@ -105,15 +104,6 @@ export default function Layout(props: {
               class="text-gray-300 hover:text-primary"
             >
               <Github fill="currentColor" />
-            </a>
-            <a
-              href="https://plausible.monoid.co.jp/blog.chenyu.pw"
-              aria-label="Analytics with Plausible"
-              target="_blank"
-              rel="noreferrer"
-              class="text-gray-300 hover:text-primary"
-            >
-              <Plausible fill="currentColor" />
             </a>
           </div>
         </div>
