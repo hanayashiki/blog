@@ -143,6 +143,10 @@ ul, ol {
   word-wrap: normal;
 }
 
+.md :not(pre) > code {
+  @apply bg-gray-700 px-1.5 py-0.5 rounded text-sm;
+}
+
 .md b,
 .md strong {
   font-weight: bold;
@@ -209,10 +213,21 @@ ul, ol {
 .md table {
   border-collapse: collapse;
   border-spacing: 0;
+  @apply w-full my-4;
 }
 
+.md th,
 .md td {
   vertical-align: top;
+  @apply border border-gray-600 px-3 py-2 text-left;
+}
+
+.md th {
+  @apply bg-gray-700 font-semibold;
+}
+
+.md tr:nth-child(even) {
+  @apply bg-gray-800/50;
 }
 
 .hljs-keyword {
