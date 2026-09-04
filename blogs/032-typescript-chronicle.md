@@ -38,7 +38,7 @@ var q: typeof f;                          // 类型查询
 
 有趣的是，`?` 在这里只表示"这个成员可以缺席"，和类型无关 —— `version` 的类型就是 `number`，不是 `number | undefined`。`?` 变成"并上一个 `undefined`"要等 2.0 的 `strictNullChecks`，何况此时还不存在 1.4 才有的联合类型。
 
-### `any` 既是所有类型的子类型也是父类型
+### any 既是所有类型的子类型也是父类型
 
 ```ts
 var a: any = 0;
@@ -515,7 +515,7 @@ var bad: number = x.a;  // Type 'string' is not assignable to type 'number'.
 
 2.0 干了一件前面所有版本都没干过的事：**撤销规则**。1.0 规范里白纸黑字写着 Null 和 Undefined 是所有类型的子类型，2.0 把这条删了。删一条已经用了两年半的规则，意味着几乎所有存量代码都会开始报错，所以它只能做成一个开关 —— 这就是 `--strictNullChecks` 的由来，也是后来 tsconfig 里那一大排 `strict*` 开关的源头。从今天来看，2.0 是 TS 从工程妥协转向严格化的标志性版本。
 
-### `readonly`（2.0）
+### readonly（2.0）
 
 在对象类型中，之前没有任何办法表达"这个属性不许改"，而 `readonly` 可以标注该属性不可再赋值。
 
@@ -591,7 +591,7 @@ const b: number[] = a;
 
 同一个修饰符，作用在属性上不检查，作用在数组上检查。
 
-### `strictNullChecks`（2.0）
+### strictNullChecks（2.0）
 
 打开这个开关之后，`null` 和 `undefined` 从"万能子类型"变成了两个普通的类型成分：
 
@@ -609,7 +609,7 @@ var v: string | undefined;
 
 前面所有的类型特性，无论联合、交叉还是元组，做的都是同一件事：描述一个值长什么样。2.1 是分水岭 —— 从这个版本起，类型可以拿另一个类型当输入去算出新的类型。今天大家熟悉的 `Partial`、`Pick`、`ReturnType` 这些"类型函数"，源头都在这里。
 
-### `keyof T`
+### keyof T
 
 ```ts
 interface P { name: string; age: number }
@@ -623,7 +623,7 @@ k = "nope";       // Type '"nope"' is not assignable to type '"name" | "age"'.
 
 顺带一提，2.1 的 `keyof` 只认字符串键。`keyof any` 在当年是 `string`，数字和 symbol 键要等到 2.9 才补上，今天它是 `string | number | symbol`。
 
-### `T[K]`
+### T[K]
 
 用 `K` 可以取出 `T` 中对应属性的类型，写法和 JS 的属性访问 `obj[key]` 类似。
 
@@ -680,7 +680,7 @@ type Record<K extends string, T> = { [P in K]: T };
 
 下面三条是映射类型里比较有意思的部分。
 
-#### 一、同态映射会保留 `?` 和 `readonly`
+#### 一、同态映射会保留 ? 和 readonly
 
 当映射的键来源写成 `keyof T` 时（规范里叫同态，homomorphic），原类型上的可选标记和只读标记会被一起搬过去：
 
@@ -756,7 +756,7 @@ type R = { [K in keyof P]-?: P[K] };
 
 下面挑四个和结构化类型直接相关的讲，其余的大多是静态分析或运行时安全方面的问题，在此不论。
 
-### `strictFunctionTypes`（2.6）
+### strictFunctionTypes（2.6）
 
 TS 从 1.0 起，函数参数就是 bivariant 的：`(x: Dog) => void` 和 `(x: Animal) => void` 可以互相赋值。这在类型论上是错的 —— 一个只会处理 `Dog` 的函数，不能拿去当"能处理任何 `Animal`"用。2.6 把它改成了正确的逆变检查。
 
@@ -789,7 +789,7 @@ var xs: Animal[] = [] as Dog[];   // 不报错，但允许往本来只放 Dog �
 
 `Array<T>` 的 `push`、`indexOf` 这些方法在标准库里都是用方法语法（双变）声明的，如果方法也走逆变，`Dog[]` 就不能赋给 `Animal[]` 了。而这个写法在存量代码里到处都是。所以 2.6 的做法是：把逆变检查加进来，但给"方法"留一扇后门，让标准库和大部分面向对象代码继续按老规则走。
 
-### `noUncheckedIndexedAccess`（4.1）
+### noUncheckedIndexedAccess（4.1）
 
 `arr[i]` 在 JS 里可能返回 `undefined`，可 TS 一直当它必定有值。这个开关把下标访问的结果并上 `undefined`：
 
@@ -811,7 +811,7 @@ arr[0] = "z";                        // Ok，写入不受影响
 
 正因如此，它不在 `strict` 里。几乎所有带循环和下标的存量代码打开它之后都会报错，而绝大部分报错在人看来是误报。
 
-### `noPropertyAccessFromIndexSignature`（4.2）
+### noPropertyAccessFromIndexSignature（4.2）
 
 一个纯风格性的开关。它要求：命中索引签名的属性必须用下标写法，只有显式声明过的属性才能用点：
 
@@ -827,7 +827,7 @@ c["debug"];  // Ok
 
 目的是让代码里"这个属性是约定好的"和"这个属性是随便拼的"在写法上区分开。类型安全性上没有任何增益 —— `c.debug` 和 `c["debug"]` 的类型完全一样。所以它也不在 `strict` 里。
 
-### `exactOptionalPropertyTypes`（4.4）
+### exactOptionalPropertyTypes（4.4）
 
 这是 `?` 的第三次含义变化。
 
@@ -871,7 +871,7 @@ const q: Q = { a: undefined };    // Ok
 
 最后一条线索。TS 的类型和值是两套独立的空间，可 JS 程序员的信息大量藏在值里 —— 配置对象、常量表、路由表、枚举字典，这些东西的形状在源码里写得清清楚楚，只是写在值那一侧。把这些信息搬到类型空间去，是一条从 1.0 一直修到 5.0 的线。
 
-### `typeof`（1.0）
+### typeof（1.0）
 
 元老里唯一一个跨空间的入口。它在创世快照里就有：
 
@@ -887,7 +887,7 @@ var r: typeof f = 1;
 
 但 1.0 的 `typeof` 只能拿到**加宽之后**的类型。当时既没有 `const`（1.4 才有），也没有字面量类型，所以从一个字符串变量身上什么细节也读不出来。这条线后面的三次改进，本质上都在解决同一件事：**怎么让 `typeof` 少丢一点信息**。
 
-### 加宽规则：`const` 与 `let`（2.1）
+### 加宽规则：const 与 let（2.1）
 
 字面量类型是 1.8 加的，但直到 2.1，`const` 声明才开始保留字面量类型：
 
@@ -907,7 +907,7 @@ const e = { k: "a" };        // { k: string }，不是 { k: "a" }
 
 原因也很实际：绝大多数对象字面量声明出来就是要改的，全部推成字面量类型会让正常代码寸步难行。于是就留下了一个缺口 —— 那些确实不打算改的常量表，没办法告诉编译器。
 
-### `as const`（3.4）
+### as const（3.4）
 
 3.4 补上了这个缺口，办法是给一个显式的退出机制：
 
@@ -934,7 +934,7 @@ type Route = typeof ROUTES[number];   // "/home" | "/about"
 
 一份数据，运行时和类型层各用一遍，不用写两遍也不会写歪。
 
-### `satisfies`（4.9）
+### satisfies（4.9）
 
 `as const` 解决了"信息丢失"，但还有另一个缺口：**标注会摧毁推断**。
 
@@ -965,7 +965,7 @@ const c = { x: "1" } satisfies Partial<Record<string, number>>;
 
 `b` 的类型是编译器推断出来的 `{ x: number; y: number }`，标注那一侧只用来检查、不参与结果。
 
-### `const` 类型参数（5.0）
+### const 类型参数（5.0）
 
 到这一步，`as const` 已经成了写库时的常见负担 —— API 需要精确的字面量类型，可这个 `as const` 必须由**调用方**写，而调用方通常不明白为什么要写：
 
