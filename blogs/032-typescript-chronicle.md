@@ -261,7 +261,7 @@ var s: string = null;
 var t: number = undefined;
 ```
 
-## Tuple, Union (`|`), Type Guards, Intersection (`&`)（v1.3 ~ 1.6，2014-10-27 ~ 2015-09-11）
+## Tuple, Union (|), Type Guards, Intersection (&)（v1.3 ~ 1.6，2014-10-27 ~ 2015-09-11）
 
 ### Tuple（1.3）
 
@@ -511,7 +511,7 @@ var n: number = x.b;    // Ok
 var bad: number = x.a;  // Type 'string' is not assignable to type 'number'.
 ```
 
-## Strict Null Checks, `readonly`（v2.0，2016-09-22）
+## Strict Null Checks, readonly（v2.0，2016-09-22）
 
 2.0 干了一件前面所有版本都没干过的事：**撤销规则**。1.0 规范里白纸黑字写着 Null 和 Undefined 是所有类型的子类型，2.0 把这条删了。删一条已经用了两年半的规则，意味着几乎所有存量代码都会开始报错，所以它只能做成一个开关 —— 这就是 `--strictNullChecks` 的由来，也是后来 tsconfig 里那一大排 `strict*` 开关的源头。从今天来看，2.0 是 TS 从工程妥协转向严格化的标志性版本。
 
@@ -605,7 +605,7 @@ var v: string | undefined;
 
 为了服务于 nullish check，此版本还引入了更完善的控制流分析（`if (u !== null) { ... }`）和非空断言 `!`，写起来和今天打开 `strict: true` 的 TS 已经很像。2.0 时还不存在 `strict: true`，之后严格选项越来越多，才有了这个总开关。
 
-## `keyof T`, `T[K]`, Mapped Types（v2.1，2016-12-05）
+## keyof T, T[K], Mapped Types（v2.1，2016-12-05）
 
 前面所有的类型特性，无论联合、交叉还是元组，做的都是同一件事：描述一个值长什么样。2.1 是分水岭 —— 从这个版本起，类型可以拿另一个类型当输入去算出新的类型。今天大家熟悉的 `Partial`、`Pick`、`ReturnType` 这些"类型函数"，源头都在这里。
 
@@ -867,7 +867,7 @@ const q: Q = { a: undefined };    // Ok
 同一批被排除在外的还有 `noImplicitOverride`（4.3）。这几个开关加起来，构成了 tsconfig 里那片"比 strict 更严格"的少数派空间。还有一个我没有探索过的问题：如果 node_modules 里的依赖基于这些更严格的选项编写，而你的项目没有打开它们，会有多少影响。
 
 
-## `typeof`, `as const`, `satisfies`, `const T`（v1.0 ~ 5.0，2014-07-12 ~ 2023-03-15）
+## typeof, as const, satisfies, const T（v1.0 ~ 5.0，2014-07-12 ~ 2023-03-15）
 
 最后一条线索。TS 的类型和值是两套独立的空间，可 JS 程序员的信息大量藏在值里 —— 配置对象、常量表、路由表、枚举字典，这些东西的形状在源码里写得清清楚楚，只是写在值那一侧。把这些信息搬到类型空间去，是一条从 1.0 一直修到 5.0 的线。
 
